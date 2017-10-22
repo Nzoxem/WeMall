@@ -1,0 +1,22 @@
+{
+  "pages":[
+    "pages/index/index",
+    "pages/gdetails/gdetails",
+    "pages/cart/cart",
+    "pages/pay/pay",
+    "pages/seladdress/seladdress",
+    "pages/addaddress/addaddress",
+    "pages/orderlist/orderlist",
+    "pages/odetails/odetails",
+    "pages/logistics/Logistics",
+    "pages/coupons/coupons",
+    "pages/mypage/mypage",
+    "pages/notice/notice"
+  ],
+  "window":{
+    "backgroundTextStyle":"light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "WeChat",
+    "navigationBarTextStyle":"black"
+  }
+}
