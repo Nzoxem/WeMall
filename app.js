@@ -1,39 +1,123 @@
 //app.js
 App({
   onLaunch: function () {
-    // 展示本地存储能力
-    var logs = wx.getStorageSync('logs') || []
-    logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
-
-    // 登录
-    wx.login({
-      success: res => {
-        // 发送 res.code 到后台换取 openId, sessionKey, unionId
+    var that = this;
+    //  获取商城名称
+    wx.request({
+      url: that.globalData.subDomain + '/config/get-value',
+      data: {
+        key: 'mallName'
+      },
+      success: function (res) {
+        if (res.data.code == 0) {
+          wx.setStorageSync('mallName', res.data.data.value);
+        }
       }
     })
-    // 获取用户信息
-    wx.getSetting({
-      success: res => {
-        if (res.authSetting['scope.userInfo']) {
-          // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-          wx.getUserInfo({
-            success: res => {
-              // 可以将 res 发送给后台解码出 unionId
-              this.globalData.userInfo = res.userInfo
-
-              // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-              // 所以此处加入 callback 以防止这种情况
-              if (this.userInfoReadyCallback) {
-                this.userInfoReadyCallback(res)
-              }
-            }
-          })
+    this.login();
+  },
+  login: function () {
+    var that = this;
+    var token = that.globalData.token;
+    if (token) {
+      wx.request({
+        url: that.globalData.subDomain + '/user/check-token',
+        data: {
+          token: token
+        },
+        success: function (res) {
+          if (res.data.code != 0) {
+            that.globalData.token = null;
+            that.login();
+          }
         }
+      })
+      return;
+    }
+    wx.login({
+      success: function (res) {
+        wx.request({
+          url: that.globalData.subDomain + '/user/wxapp/login',
+          data: {
+            code: res.code
+          },
+          success: function (res) {
+            if (res.data.code == 10000) {
+              // 去注册
+              that.registerUser();
+              return;
+            }
+            if (res.data.code != 0) {
+              // 登录错误
+              wx.hideLoading();
+              wx.showModal({
+                title: '提示',
+                content: '无法登录，请重试',
+                showCancel: false
+              })
+              return;
+            }
+            //console.log(res.data.data.token)
+            that.globalData.token = res.data.data.token;
+          }
+        })
+      }
+    })
+  },
+  registerUser: function () {
+    var that = this;
+    wx.login({
+      success: function (res) {
+        var code = res.code; // 微信登录接口返回的 code 参数，下面注册接口需要用到
+        wx.getUserInfo({
+          success: function (res) {
+            var iv = res.iv;
+            var encryptedData = res.encryptedData;
+            // 下面开始调用注册接口
+            wx.request({
+              url: that.globalData.subDomain + '/user/wxapp/register/complex',
+              data: { code: code, encryptedData: encryptedData, iv: iv }, // 设置请求的 参数
+              success: (res) => {
+                wx.hideLoading();
+                that.login();
+              }
+            })
+          }
+        })
+      }
+    })
+  },
+  sendTempleMsg: function (orderId, trigger, template_id, form_id, page, postJsonString) {
+    var that = this;
+    wx.request({
+      url: that.globalData.subDomain + '/template-msg/put',
+      method: 'POST',
+      header: {
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      data: {
+        token: that.globalData.token,
+        type: 0,
+        module: 'order',
+        business_id: orderId,
+        trigger: trigger,
+        template_id: template_id,
+        form_id: form_id,
+        url: page,
+        postJsonString: postJsonString
+      },
+      success: (res) => {
+        //console.log('*********************');
+        //console.log(res.data);
+        //console.log('*********************');
       }
     })
   },
   globalData: {
-    userInfo: null
+    userInfo: null,
+    subDomain: "https://api.it120.cc/zxmall",
+    version: "1.6.1",
+    shareProfile: 'WeMall，您的不二选择' // 首页转发的时候话术
   }
+  // 根据自己需要修改下单时候的模板消息内容设置，可增加关闭订单、收货时候模板消息提醒
 })

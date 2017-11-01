@@ -1,13 +1,45 @@
-<!--index.wxml-->
+<!-- 商城首页 -->
 <view class="container">
-  <view class="userinfo">
-    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
-    <block wx:else>
-      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" background-size="cover"></image>
-      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-    </block>
+  <!-- Banner轮播 -->
+  <view class="swiper-cont">
+    <swiper class="swiper-box" autoplay="true" indicator-dots="true" bindchange="swiperChange">
+      <block wx:for="{{banners}}" wx:key="id">
+        <swiper-item>
+          <image class="slide-img" bintap="tapBanner" data-id="{{item.businessId}}" src="{{item.picUrl}}" />
+        </swiper-item>
+      </block>
+    </swiper>
   </view>
-  <view class="usermotto">
-    <text class="user-motto">{{motto}}</text>
+  <!-- 类别 -->
+  <view class="type-cont">
+    <scroll-view class="types" scroll-x="true">
+      <view class="type-box" wx:for-items="{{categories}}" wx:key="id">
+        <view id="{{item.id}}" class="type-item {{activeCategoryId == item.id ? 'type-item-on' : ''}}" bindtap="tabClick">
+          {{item.name}}
+        </view>
+      </view>
+    </scroll-view>
   </view>
+  <!-- 公告 -->
+  <view class="notice" wx:if="{{noticeList}}">
+    <view class="notice_iteml">公告:</view>
+    <swiper class="notice_swiper" wx:if="{{noticeList}}" vertical="true" autoplay="true" circular="true">
+      <navigator wx:for="{{noticeList.dataList}}" wx:key="id" url="/pages/notice/notice?id={{item.id}}" open-type="navigate">
+        <swiper-item>
+          <view class="notice_itemr">{{item.title}}</view>
+        </swiper-item>
+      </navigator>
+    </swiper>
+  </view>
+  <!-- 商品列表 -->
+  <view class="goods-cont">
+    <view class="goods-box" wx:for-items="{{goods}}" wx:key="{{index}}" bindtap="onDetailsTap" data-id="{{item.id}}">
+      <view class="img-box">
+        <image src="{{item.pic}}_m" class="gimage" mode="aspectFill" lazy-load="true"></image>
+      </view>
+      <view class="goods-title">{{item.name}}</view>
+      <view class="goods-price">￥ {{item.minPrice}} </view>
+    </view>
+  </view>
+  <view class="no-more" hidden="{{loadingMoreHidden?true:false}}">没有更多了</view>
 </view>
