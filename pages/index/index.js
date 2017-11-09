@@ -131,9 +131,10 @@ Page({
       }
     })
   },
-  onDetailsTap:function(event){
+  onDetailsTap: function (event) {
+    //    console.log(event.currentTarget.dataset.id);
     wx.navigateTo({
-      url: "Pages/gdetails/gdetails?id="+event.currentTarget.dataset.id
+      url: "/pages/gdetails/gdetails?id=" + event.currentTarget.dataset.id
     })
   }
 })

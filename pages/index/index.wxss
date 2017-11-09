@@ -10,19 +10,19 @@
 
 .swiper-box {
   width: 100%;
-  height: 500rpx;
+  height: 600rpx;
 }
 
 swiper-item image {
   width: 100%;
   display: inline-block;
   overflow: hidden;
-  height: 500rpx;
+  height: 600rpx;
 }
 
 .slide-img {
   width: 750rpx;
-  height: 500rpx;
+  height: 600rpx;
 }
 
 .type-cont {
