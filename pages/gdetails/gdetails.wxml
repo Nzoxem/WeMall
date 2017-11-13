@@ -93,11 +93,11 @@
       <view class="buynum">
         <view class="numlab">购买数量</view>
         <view class="numbox">
-          <view class="num-jian {{buyNumber == buyNumMin ? 'hui': ''}}" bindtap="numJianTap"></view>
+          <view class="num-jian {{buyNumber == buyNumMin ? 'hui': ''}}" bindtap="numJianTap">-</view>
           <view class="num-input">
             <input type="number" value="{{buyNumber}}" disabled/>
           </view>
-          <view class="num-jia {{buyNumber== buyNumMax ? 'hui': ''}}" bindtap="numJiaTap"></view>
+          <view class="num-jia {{buyNumber== buyNumMax ? 'hui': ''}}" bindtap="numJiaTap">+</view>
         </view>
       </view>
       <view class="popjoinbut" wx:if="{{shopType=='addShopCar'}}" bindtap="addShopCar">加入购物车</view>

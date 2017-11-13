@@ -174,7 +174,15 @@ Page({
       currentNum++;
       this.setData({
         buyNumber: currentNum
-      })
+      });
+    }
+    else if (this.data.buyNumber >= this.data.buyNumMax) {
+      wx.showModal({
+        title: "提示",
+        content: "此商品库存量只有" + this.data.buyNumMax + "件",
+        showCancel: false
+      });
+      return;
     }
 
   },
@@ -228,6 +236,7 @@ Page({
     shopCarMap.logisticsType = this.data.goodsDetail.basicInfo.logisticsId;
     shopCarMap.logistics = this.data.goodsDetail.logistics;
     shopCarMap.weight = this.data.goodsDetail.basicInfo.weight;
+    shopCarMap.stores = this.data.buyNumMax;
     var shopCarInfo = this.data.shopCarInfo;
     if (!shopCarInfo.shopNum) {
       shopCarInfo.shopNum = 0;
@@ -272,6 +281,13 @@ Page({
         showCancel: false
       });
       return;
+    } else if (this.data.buyNum < this.data.buyNumMax) {
+      wx.showModal({
+        title: "提示",
+        content: "此商品库存量只有" + this.data.buyNumMax + "件",
+        showCancel: false
+      });
+      return;
     }
     //组件立即购买信息
     var buyNowInfo = this.buildBuyNowInfo();
@@ -298,7 +314,7 @@ Page({
     shopCarMap.logisticsType = this.data.goodsDetail.basicInfo.logisticsId;
     shopCarMap.logistics = this.data.goodsDetail.logistics;
     shopCarMap.weight = this.data.goodsDetail.basicInfo.weight;
-
+    shopCarMap.stores = this.data.buyNumMax;
     var buyNowInfo = {};
     if (!buyNowInfo.shopNum) {
       buyNowInfo.shopNum = 0;
