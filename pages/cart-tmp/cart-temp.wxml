@@ -1,0 +1,43 @@
+<!-- 空购物车 -->
+<template name="empty">
+  <view class="title-box">购物车空空如也~</view>
+  <view class="to-index" bindtap="toIndexPage">去逛逛</view>
+</template>
+
+<template name="cart-goods">
+  <view class="top">
+    <view class="label">WeMall</view>
+    <view class="edit" hidden="{{!hidden}}" bindtap="editTap">编辑</view>
+    <view class="edit" hidden="{{hidden}}" bindtap="saveTap">完成</view>
+  </view>
+  <view class="goodList">
+    <view class="a-goods" wx:for="{{list}}" wx:key="{{index}}">
+      <view class="a-goods-conts {{item.active?'active':''}}" bindtap="selectTap" data-index="{{index}}">
+        <view class="goods-info">
+          <view class="img-box">
+            <image src="{{item.pic}}" class="img"></image>
+          </view>
+          <view class="text-box">
+            <view class="goods-title">{{item.name}}</view>
+            <view class="goods-label">{{item.label}}</view>
+            <view class="goods-price">￥{{item.price}}</view>
+            <view class="buy-num">
+              <view class="jian-btn {{item.number==1? 'disabled' : ''}}" catchtap="jianBtnTap" data-index="{{index}}">-</view>
+              <input type="number" value="{{item.number}}" disabled/>
+              <view class="jia-btn {{item.number==10? 'disabled' : ''}}" catchtap="jiaBtnTap" data-index="{{index}}">+</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="jiesuan-box">
+    <view class="left-price">
+      <view class="all-selected  {{allSelect?'active':''}}" bindtap="bindAllSelect">全选</view>
+      <view class="total" hidden="{{noSelect}}">合计：￥{{totalPrice}}</view>
+    </view>
+    <view class="to-pay-btn {{noSelect?'no-select':''}}" hidden="{{!hidden}}" bindtap="toPayOrder">去结算</view>
+    <view class="to-pay-btn {{noSelect?'no-select':''}}" hidden="{{hidden}}" bindtap="deleteSelected">删除</view>
+  </view>
+</template>
