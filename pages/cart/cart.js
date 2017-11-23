@@ -178,10 +178,10 @@ Page({
       if (list[parseInt(index)].number < list[parseInt(index)].stores) {
         list[parseInt(index)].number++;
         this.setGoodsList(this.getHidden(), this.getTotalPrice(), this.getAllSelect(), this.getNoSelect(), list);
-      }else{
+      } else {
         wx.showModal({
           title: "提示",
-          content: "此商品库存量只有" + list[parseInt(index)].stores+"件",
+          content: "此商品库存量只有" + list[parseInt(index)].stores + "件",
           showCancel: false,
         });
         return;
@@ -203,6 +203,123 @@ Page({
       }
     }
     this.setGoodsList(this.getHidden(), this.getTotalPrice(), !curAll, this.getNoSelect(), list);
+  },
+  //去结算转到支付页面
+  toPayOrder: function () {
+    wx.showLoading();
+    var that = this;
+    if (this.data.goodsList.noSelect) {
+      wx.hideLoading();
+      return;
+    }
+    //重新计算价格判断库存
+    var shopList = [];
+    var shopMem = wx.getStorageSync("shopCarInfo");
+    if (shopMem && shopMem.shopList) {
+      shopList = shopMem.shopList.filter(entity => {
+        return entity.active;
+      });
+    }
+    if (shopList.length == 0) {
+      wx.hideLoading();
+      return;
+    }
+    var isFail = false;
+    var doneNumber = 0;
+    var needDoneNumber = shopList.length;
+    for (let i = 0; i < shopList.length; i++) {
+      if (isFail) {
+        wx.hideLoading();
+        return;
+      }
+      let carShopBean = shopList[i];
+      if (!carShopBean.propertyChildIds || carShopBean.propertyChildIds == "") {
+        wx.request({
+          url: app.globalData.subDomain + "/shop/goods/detail",
+          data: {
+            id: carShopBean.goodsId
+          },
+          success: function (res) {
+            doneNumber++;
+            if (res.data.data.properties) {
+              wx.showModal({
+                title: "提示",
+                content: res.data.data.basicInfo.name + "商品已失效，请重新购买",
+                showCancel: false
+              })
+              isFail = true;
+              wx.hideLoading();
+              return;
+            }
+            if (res.data.data.basicInfo.stores < carShopBean.number) {
+              wx.showModal({
+                title: "提示",
+                content: res.data.data.basicInfo.name + "库存不足，请重新购买",
+                showCancel: false
+              })
+              isFail = true;
+              wx.hideLoading();
+              return;
+            }
+            if (res.data.data.basicInfo.minPrice != carShopBean.price) {
+              wx.showModal({
+                title: "提示",
+                content: res.data.data.basicInfo.name + "价格有调整，请重新购买",
+                showCancel: false
+              })
+              isFail = true;
+              wx.hideLoading();
+              return;
+            }
+            if (needDoneNumber == doneNumber) {
+              that.navigateToPayOrder();
+            }
+          }
+        });
+      } else {
+        wx.request({
+          url: app.globalData.subDomain + "/shop/goods/price",
+          data: {
+            goodsId: carShopBean.goodsId,
+            propertyChildIds: carShopBean.propertyChildIds
+          },
+          success: function (res) {
+            doneNumber++;
+            if (res.data.data.stores < carShopBean.number) {
+              wx.showModal({
+                title: '提示',
+                content: carShopBean.name + ' 库存不足，请重新购买',
+                showCancel: false
+              })
+              isFail = true;
+              wx.hideLoading();
+              return;
+            }
+            if (res.data.data.price != carShopBean.price) {
+              wx.showModal({
+                title: '提示',
+                content: carShopBean.name + ' 价格有调整，请重新购买',
+                showCancel: false
+              })
+              isFail = true;
+              wx.hideLoading();
+              return;
+            }
+            if(needDoneNumber==doneNumber){
+              that.navigateToPayOrder();
+            }
+          }
+        })
+      }
+    }
+  },
+  //跳转至支付
+  navigateToPayOrder:function(){
+    wx.hideLoading();
+    wx.navigateTo({
+      url: "/pages/pay/pay",
+    })
   }
+
 
 })

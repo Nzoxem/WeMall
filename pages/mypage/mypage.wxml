@@ -1,2 +1,33 @@
-<!--pages/mypage/mypage.wxml-->
-<text>pages/mypage/mypage.wxml</text>
+<view class="container">
+  <view class="userInfo">
+    <image wx:if="{{userInfo&&userInfo.avatarUrl}}" class="userInfo-avatar" src="{{userInfo.avatarUrl}}" background-size="cover"></image>
+    <text class="userName">{{userInfo.nickName}}</text>
+  </view>
+  <view style="height:20rpx;background:#eee;width:100%;"></view>
+  <view class="my-item" style='background:none;display:flex;'>
+    <view>当前积分{{score}}</view>
+    <button wx:if="{{continuous==0}}" bindtap="scoresign" style='height:80rpx;margin-right:70rpx;'>每日签到</button>
+    <button wx:if="{{continuous>0}}" disabled="true" style='height:80rpx;margin-right:70rpx;'>已连续{{continuous}}天签到</button>
+  </view>
+  <view class="my-item">
+    <navigator url="/pages/orderlist/orderlist" hover-class="navigator-hover">我的订单</navigator>
+  </view>
+  <view class="my-item">
+    <navigator url="/pages/seladdress/seladdress" hover-class="navigator-hover">我的收货地址</navigator>
+  </view>
+  <view class="my-item">
+    <navigator url="/pages/coupons/coupons" hover-class="navigator-hover">我的优惠券</navigator>
+  </view>
+
+  <view style="height:20rpx;background: #eee;width:100%;"></view>
+  <view class="my-item" style="border:none;padding:0rpx;margin:0rpx;background:none;border:none;height:auto;line-height:auto;">
+    <button type="warn" bindtap="relogin">重新登录</button>
+  </view>
+  <view style="height:20rpx;background: #eee;width:100%;"></view>
+  <view class="my-item" style="border:none;padding:0rpx;margin:0rpx;background:none;border:none;height:auto;line-height:auto;">
+    <button type="warn" bindtap="aboutUs">关于我们</button>
+  </view>
+  <view style="height:20rpx;background: #eee;width:100%;"></view>
+  
+
+</view>
