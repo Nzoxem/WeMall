@@ -29,18 +29,18 @@ Page({
       var buyNowInfo = wx.getStorageSync("buyNowInfo");
       if (buyNowInfo && buyNowInfo.shopList) {
         shopList = buyNowInfo.shopList;
-      } 
+      }
     } else {
       //购物车购买
       var shopCarInfo = wx.getStorageSync("shopCarInfo");
       if (shopCarInfo && shopCarInfo.shopList) {
-        shopList = shopCarInfo.shopList.filter(function(entity){
+        shopList = shopCarInfo.shopList.filter(function (entity) {
           return entity.active;
         });
       }
     }
     that.setData({
-      goodsList:shopList
+      goodsList: shopList
     });
     that.initAddress();
   },
@@ -48,9 +48,10 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (e) {
+    //显示收货地址标识
     this.setData({
-      isNeedLogistics:1,
-      orderType:e.orderType
+      isNeedLogistics: 1,
+      orderType: e.orderType
     });
   },
 
@@ -71,65 +72,180 @@ Page({
             curAddressData: null
           })
         }
-        //that.processYunfei();
+        that.processYunfei();
       }
     })
   },
-  processYunfei:function(){
-
+  createOrder: function (e) {
+    wx.showLoading();
+    var that = this;
+    var loginToken = app.globalData.token;//用户登录token
+    var remark = "";//备注
+    if (e) {
+      remark = e.detail.value.remark;
+    }
+    var postData = {
+      token: loginToken,
+      goodsJsonStr: that.data.goodsJsonStr,
+      remark: remark
+    };
+    if (that.data.isNeedLogistics > 0) {
+      if (!that.data.curAddressData) {
+        wx.hideLoading();
+        wx.showModal({
+          title: '错误',
+          content: '请先设置您的收货地址',
+          showCancel: false
+        })
+        return;
+      }
+      postData.provinceId = that.data.curAddressData.provinceId;
+      postData.cityId = that.data.curAddressData.cityId;
+      if (that.data.curAddressData.districtId) {
+        postData.districtId = this.data.curAddressData.districtId;
+      }
+      postData.address = that.data.curAddressData.address;
+      postData.linkMan = that.data.curAddressData.linkMan;
+      postData.mobile = that.data.curAddressData.mobile;
+      postData.code = that.data.curAddressData.code;
+    }
+    if (that.data.curCoupon) {
+      postData.couponId = that.data.curCoupon.id;
+    }
+    if (!e) {
+      postData.calculate = "true";
+    }
+    wx.request({
+      url: app.globalData.subDomain + "/order/create",
+      method: "POST",
+      header: {
+        "content-type": "application/x-www-form-urlencoded"
+      },
+      data: postData,
+      success: function (res) {
+        wx.hideLoading();
+        if (res.data.code != 0) {
+          wx.showModal({
+            title: '错误',
+            content: res.data.msg,
+            showCancel: false
+          });
+          return;
+        }
+        if (e && "buyNow" != that.data.orderType) {
+          wx.removeStorageSync("shopCarInfo");
+        }
+        if (!e) {
+          that.setData({
+            isNeedLogistics: res.data.data.isNeedLogistics,
+            allGoodsPrice: res.data.data.amountTotle,
+            allGoodsYunfei: res.data.data.amountLogistics + res.data.data.amountTotle,
+            yunfei: res.data.data.amountLogistics
+          });
+          that.getMycoupons();
+          return;
+        }
+        // 配置模板消息推送
+        var postJsonString = {};
+        postJsonString.keyword1 = { value: res.data.data.dateAdd, color: '#173177' }
+        postJsonString.keyword2 = { value: res.data.data.amountReal + '元', color: '#173177' }
+        postJsonString.keyword3 = { value: res.data.data.orderNumber, color: '#173177' }
+        postJsonString.keyword4 = { value: '订单已关闭', color: '#173177' }
+        postJsonString.keyword5 = { value: '您可以重新下单，请在30分钟内完成支付', color: '#173177' }
+        app.sendTempleMsg(res.data.data.id, -1,
+          'uJQMNVoVnpjRm18Yc6HSchn_aIFfpBn1CZRntI685zY', e.detail.formId,
+          'pages/index/index', JSON.stringify(postJsonString));
+        postJsonString = {};
+        postJsonString.keyword1 = { value: '您的订单已发货，请注意查收', color: '#173177' }
+        postJsonString.keyword2 = { value: res.data.data.orderNumber, color: '#173177' }
+        postJsonString.keyword3 = { value: res.data.data.dateAdd, color: '#173177' }
+        app.sendTempleMsg(res.data.data.id, 2,
+          'GeZutJFGEWzavh69savy_KgtfGj4lHqlP7Zi1w8AOwo', e.detail.formId,
+          'pages/odetails/odetails?id=' + res.data.data.id, JSON.stringify(postJsonString));
+        //下单成功跳转到订单管理界面
+        wx.redirectTo({
+          url: "/pages/orderlist/orderlist",
+        })
+      }
+    })
+  },
+  processYunfei: function () {
+    var that = this;
+    var goodsList = this.data.goodsList;
+    var goodsJson = "[";
+    var isNeedLogistics = 0;
+    var allGoodsPrice = 0;
+    for (let i = 0; i < goodsList.length; i++) {
+      let carShopBean = goodsList[i];
+      if (carShopBean.logistics) {
+        isNeedLogistics = 1;
+      }
+      allGoodsPrice += carShopBean.price * carShopBean.number;
+      var goodsJsonTemp = "";
+      if (i > 0) {
+        goodsJsonTemp = ",";
+      }
+      let inviter_id = 0;
+      let inviter_id_storge = wx.getStorageSync("inviter_id" + carShopBean.goodsId);
+      if (inviter_id_storge) {
+        inviter_id = inviter_id_storge;
+      }
+      goodsJsonTemp += '{"goodsId":' + carShopBean.goodsId + ',"number":' + carShopBean.number + ',"propertyChildIds":"' + carShopBean.propertyChildIds + '","logisticsType":0,"inviter_id":' + inviter_id + '}';
+      goodsJson += goodsJsonTemp;
+    }
+    goodsJson += "]";
+    that.setData({
+      isNeedLogistics: isNeedLogistics,
+      goodsJsonStr: goodsJson
+    });
+    that.createOrder();
   },
   addAdress: function () {
     wx.navigateTo({
-      url: 'pages/addaddress/addaddress',
+      url: '/pages/addaddress/addaddress',
     })
   },
   selectAddress: function () {
     wx.navigateTo({
-      url: 'pages/seladdress/seladdress',
+      url: '/pages/seladdress/seladdress',
     })
   },
-  
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-
+  getMycoupons:function(e){
+    var that=this;
+    wx.request({
+      url: app.globalData.subDomain+"/discounts/my",
+      data:{
+        token:app.globalData.token,
+        status:0
+      },
+      success:function(res){
+        if(res.data.code==0){
+          var coupons=res.data.data.filter(function(e){
+            return e.moneyHreshold<=that.data.allGoodsYunfei;
+          });
+          if(coupons.length>0){
+            that.setData({
+              hasNoCoupons:false,
+              coupons:coupons
+            });
+          }
+        }
+      }
+    });
   },
-
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
+  bindChangeCoupon:function(e){
+    var that=this;
+    const selIndex=e.detail.value[0]-1;
+    if(selIndex==-1){
+      that.setData({
+        youhuijine:0,
+        curCoupon:null
+      });
+      return;
+    }
+    that.setData({
+      youhuijine:that.data.coupons[selIndex].money,
+      curCoupon:that.data.coupons[selIndex]
+    });
   }
 })

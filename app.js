@@ -117,7 +117,7 @@ App({
     userInfo: null,
     subDomain: "https://api.it120.cc/zxmall",
     version: "1.6.1",
-    shareProfile: 'WeMall，您的不二选择' // 首页转发的时候话术
+    shareProfile: 'WeMall，您的不二选择' 
   }
   // 根据自己需要修改下单时候的模板消息内容设置，可增加关闭订单、收货时候模板消息提醒
 })

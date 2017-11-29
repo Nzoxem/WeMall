@@ -297,7 +297,7 @@ Page({
     })
     this.closePopupTap();
     wx.navigateTo({
-      url: "/Pages/pay/pay?orderType=buyNow",
+      url: "/pages/pay/pay?orderType=buyNow",
     })
   },
   buildBuyNowInfo: function (e) {
