@@ -5,62 +5,44 @@ Page({
    * 页面的初始数据
    */
   data: {
-  
+    selCity:"请选择",
+    selProvince:"请选择",
+    selDistrict:"请选择",
+    provinces:[],
+    cities:[],
+    districts:[],
+    selProviceIndex:0,
+    selCityIndex:0,
+    selDistricIndex:0
   },
+  bindSave:function(e){
 
+  },
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
   
   },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-  
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
   onShow: function () {
   
   },
+  selectCity:function(e){
 
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-  
   },
+  pickerProvince:function(e){
 
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-  
   },
+  pickerCity:function(e){
 
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-  
   },
+  pickerDistrict:function(e){
 
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-  
   },
+  deleteAddress:function(e){
 
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-  
+  },
+  bindCancel:function(e){
+    wx.navigateBack({});
   }
 })
