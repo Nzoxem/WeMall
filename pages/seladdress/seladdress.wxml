@@ -1,2 +1,18 @@
-<!--pages/seladdress/seladdress.wxml-->
-<text>pages/seladdress/seladdress.wxml</text>
+<view class="container">
+  <view class="address-list">
+    <view class="a-address" wx:for="{{addressList}}" wx:key="{{index}}">
+      <view class="left-text {{item.isDefault? 'active':''}}" bindtap="selectTap" data-id="{{item.id}}">
+        <view class="name-tel">
+          {{item.linkMan}} {{item.mobile}}
+        </view>
+        <view class="address-box">
+          {{item.address}}
+        </view>
+      </view>
+      <view class="right-edit" bindtap="editAddress" data-id="{{item.id}}"></view>
+    </view>
+  </view>
+  <view class="bottom-box">
+    <view class="add-btn" bindtap="addAddress">新增收货地址</view>
+  </view>
+</view>
