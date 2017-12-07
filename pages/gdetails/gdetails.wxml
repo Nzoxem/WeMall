@@ -19,7 +19,7 @@
   <view class="goodsInfo">
     <view class="goodsTitle">{{goodsDetail.basicInfo.name}}</view>
     <view class="goodsPrice">￥{{selectSizePrice}}</view>
-    <view class="goodsPrice" style="color:#999;font-size:24rpx;">已售{{goodsDetail.basicInfo.numberOrders}}</view>
+    <view class="goodsPrice" style="color:#999;font-size:24rpx;">已售{{goodsDetail.basicInfo.numberOrders>0?goodsDetail.basicInfo.numberOrders:-goodsDetail.basicInfo.numberOrders}}</view>
     <view class="goodsPrice" style="color:#999;font-size:24rpx;">共收到{{goodsDetail.basicInfo.numberGoodReputation}}次好评</view>
   </view>
   <view class="row-arrrow" wx:if="{{hasMoreSelect}}" bindtap="onMoreSize">
