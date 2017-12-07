@@ -14,7 +14,11 @@
 .add-address {
   width: 100%;
 }
+.selCoupons{
+  font-size: 28rpx;
+  color:#e64340;
 
+}
 .title {
   font-size: 28rpx;
   color: #000;

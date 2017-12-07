@@ -7,6 +7,11 @@ Page({
     swiperCurrent: 0,
     categories: [],
     activeCategoryId: 0,
+    goods: [],
+    scrollTop: "0",
+    loadingMoreHidden: true,
+    hasNoCoupons: true,
+    coupons: []
   },
   /**
   * 生命周期函数--监听页面加载
@@ -60,8 +65,82 @@ Page({
       }
     })
     that.getNotice();
+    that.getCoupons();
   },
-
+  getCoupons: function () {
+    var that = this;
+    wx.request({
+      url: app.globalData.subDomain + "/discounts/coupons",
+      data: {
+        type: ""
+      },
+      success: function (res) {
+        if (res.data.code == 0) {
+          that.setData({
+            hasNoCoupons: false,
+            coupons: res.data.data
+          });
+        }
+      }
+    });
+  },
+  gitCoupons: function (e) {
+    var that = this;
+    wx.request({
+      url: app.globalData.subDomain + "/discounts/fetch",
+      data: {
+        id: e.currentTarget.dataset.id,
+        token: app.globalData.token
+      },
+      success: function (res) {
+        if (res.data.code == 20001 || res.data.code == 20002) {
+          wx.showModal({
+            title: '错误',
+            content: '来晚了',
+            showCancel: false
+          })
+          return;
+        }
+        if (res.data.code == 20003) {
+          wx.showModal({
+            title: '错误',
+            content: '已达到领取上限，无法继续领取',
+            showCancel: false
+          })
+          return;
+        }
+        if (res.data.code == 30001) {
+          wx.showModal({
+            title: '错误',
+            content: '您的积分不足',
+            showCancel: false
+          })
+          return;
+        }
+        if (res.data.code == 20004) {
+          wx.showModal({
+            title: '错误',
+            content: '已过期',
+            showCancel: false
+          })
+          return;
+        }
+        if (res.data.code == 0) {
+          wx.showToast({
+            title: '领取成功',
+            icon: 'success',
+            duration: 2000
+          })
+        }else{
+          wx.showModal({
+            title: '错误',
+            content: res.data.msg,
+            showCancel: false
+          })
+        }
+      }
+    })
+  },
   swiperChange: function (event) {
     this.setData({
       swiperCurrent: event.detail.current
@@ -137,4 +216,5 @@ Page({
       url: "/pages/gdetails/gdetails?id=" + event.currentTarget.dataset.id
     })
   }
+  
 })

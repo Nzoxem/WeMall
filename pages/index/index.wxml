@@ -5,7 +5,7 @@
     <swiper class="swiper-box" autoplay="true" indicator-dots="true" bindchange="swiperChange">
       <block wx:for="{{banners}}" wx:key="id">
         <swiper-item>
-          <image class="slide-img"  bindtap="tapBanner" data-id="{{item.businessId}}" src="{{item.picUrl}}" />
+          <image class="slide-img" bindtap="tapBanner" data-id="{{item.businessId}}" src="{{item.picUrl}}" />
         </swiper-item>
       </block>
     </swiper>
@@ -30,6 +30,17 @@
         </swiper-item>
       </navigator>
     </swiper>
+  </view>
+  <!-- 优惠券 -->
+  <view class="coupons" hidden="{{hasNoCoupons}}">
+    <scroll-view class="coupons-scroll" scroll-x="true">
+      <view class="coupons-item" wx:for="{{coupons}}" wx:for-index="idx" wx:key="id" data-id="{{item.id}}" bindtap="gitCoupons">
+        <view style="font-size : 35rpx">￥{{item.moneyMax}}元</view>
+        <view>{{item.name}}</view>
+        <view>满{{item.moneyHreshold}}元使用</view>
+        <view wx:if="{{item.dataEndType==0}}">领取{{item.dateEndDays}}天内有效</view>
+      </view>
+    </scroll-view>
   </view>
   <!-- 商品列表 -->
   <view class="goods-cont">

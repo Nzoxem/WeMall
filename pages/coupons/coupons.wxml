@@ -1,2 +1,18 @@
-<!--pages/coupons/coupons.wxml-->
-<text>pages/coupons/coupons.wxml</text>
+<view class="container">
+  <view class="coupons-list" hidden="{{coupons ? false : true}}">
+    <view class="coupons-item" wx:for="{{coupons}}" wx:for-index="idx"data-id="{{item.id}}">
+      <view style="font-size: 50rpx">￥{{item.money}}元</view>
+      <view>{{item.name}}</view>
+      <view>满{{item.moneyHreshold}}元使用</view>
+      <view>{{item.dateEnd}}前有效</view>
+    </view>
+  </view>
+  <view class="no-order" hidden="{{coupons ? true : false}}">
+    <image class="no-order-img" src="/images/no-order.png"></image>
+    <view class="text">暂无优惠券</view>
+  </view>
+  <view style="height:100rpx;background-color:#fff;width:100%;"></view>
+  <view class="bottom-box">
+    <view class="add-btn" bindtap="goBuy">立即前往下单</view>
+  </view>
+</view>
