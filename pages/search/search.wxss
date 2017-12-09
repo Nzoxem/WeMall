@@ -1,0 +1,92 @@
+.search {
+  background-color: #f2f2f2;
+  height: 80rpx;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.searchImg {
+  margin: auto 0 auto 20rpx;
+}
+.clearImg{
+  margin: auto 20rpx auto 0;
+}
+.placeholder {
+  font-size: 14px;
+  margin-left: 20rpx;
+}
+
+.search input {
+  height: 100%;
+  width: 600rpx;
+  margin-left: 20px;
+  font-size: 28rpx;
+}
+.nogoods{
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    top: 88rpx;
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding-top: 203rpx;
+    background-color: #F2f2f2;
+}
+.no-goods-img{
+    width: 100rpx;
+    height: 100rpx;
+    margin-bottom: 31rpx;
+}
+.nogoods .text{
+    font-size:28rpx;
+    color:#999999;
+    text-align: center
+}
+.goods-cont {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  box-sizing: content-box;
+  padding: 24rpx;
+}
+
+.goods-box {
+  width: 339rpx;
+  height: 472rpx;
+  background-color: #fff;
+  overflow: hidden;
+  margin-bottom: 24rpx;
+}
+
+.img-box {
+  width: 339rpx;
+  height: 339rpx;
+  overflow: hidden;
+}
+
+.gimage {
+  width: 339rpx;
+  height: 339rpx;
+}
+
+.goods-title {
+  width: 280rpx;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 24rpx;
+  padding: 24rpx 0 0rpx 0;
+  color: #000;
+  margin-left: 24rpx;
+}
+
+.goods-price {
+  width: 280rpx;
+  overflow: hidden;
+  font-size: 24rpx;
+  padding: 24rpx 0;
+  color: #e64340;
+  margin-left: 24rpx;
+}

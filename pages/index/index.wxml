@@ -1,5 +1,11 @@
 <!-- 商城首页 -->
 <view class="container">
+
+  <!-- 搜索框 -->
+  <view class="search">
+    <icon type="search" class="searchImg" size="13" color="#e64340"></icon>
+    <input type="text" class="search-text" placeholder-class="placeholder" value="{{keyword}}" bindinput="inputChange" bindconfirm="onConfirm" confirm-type="search" placeholder="输入商品的关键词即可搜索"></input>
+  </view>
   <!-- Banner轮播 -->
   <view class="swiper-cont">
     <swiper class="swiper-box" autoplay="true" indicator-dots="true" bindchange="swiperChange">

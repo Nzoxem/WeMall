@@ -1,0 +1,20 @@
+<view class="container">
+  <view class="search">
+    <icon type="search" class="searchImg" size="13" color="#e64340"></icon>
+    <input type="text" class="search-text" placeholder-class="placeholder" value="{{keywords}}" bindinput="inputChange" bindconfirm="onKeyConfirm" confirm-type="search" placeholder="{{oldkeyword}}"></input>
+    <icon wx:if="{{keywords}}" type="cancel" class="clearImg" size="16" color="#e64340" bindtap="cancelTap"></icon>
+  </view>
+  <view class="goods-cont" wx:if="{{goodsList.length>0}}">
+    <view class="goods-box" wx:for-items="{{goodsList}}" wx:key="{{index}}" bindtap="onDetailsTap" data-id="{{item.id}}">
+      <view class="img-box">
+        <image src="{{item.pic}}_m" class="gimage" mode="aspectFill" lazy-load="true"></image>
+      </view>
+      <view class="goods-title">{{item.name}}</view>
+      <view class="goods-price">￥ {{item.minPrice}} </view>
+    </view>
+  </view>
+  <view class="nogoods" wx:elif="{{goodsList.length==0}}">
+    <image class="no-goods-img" src="/images/no-order.png"></image>
+    <view class="text">对不起，暂无您所需要的商品</view>
+  </view>
+</view>

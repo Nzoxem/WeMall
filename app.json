@@ -11,7 +11,8 @@
     "pages/logistics/Logistics",
     "pages/coupons/coupons",
     "pages/mypage/mypage",
-    "pages/notice/notice"
+    "pages/notice/notice",
+    "pages/search/search"
   ],
   "window": {
     "backgroundTextStyle": "light",

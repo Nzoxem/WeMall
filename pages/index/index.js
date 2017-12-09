@@ -11,7 +11,8 @@ Page({
     scrollTop: "0",
     loadingMoreHidden: true,
     hasNoCoupons: true,
-    coupons: []
+    coupons: [],
+    keywords:""
   },
   /**
   * 生命周期函数--监听页面加载
@@ -67,6 +68,19 @@ Page({
     that.getNotice();
     that.getCoupons();
   },
+  //搜索
+  inputChange:function(e){
+    this.setData({
+      keywords:e.detail.value,
+    })
+  },
+  onConfirm:function(e){
+    var key=e.detail.value;
+    wx.navigateTo({
+      url: '/pages/search/search?key='+key,
+    })
+  },
+  //获取优惠券
   getCoupons: function () {
     var that = this;
     wx.request({
