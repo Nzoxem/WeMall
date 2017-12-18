@@ -19,7 +19,7 @@ Page({
   },
   cancelOrderTap: function (e) {
     var that = this;
-    var orderId=e.currentTarget.dataset.id;
+    var orderId = e.currentTarget.dataset.id;
     wx.showModal({
       title: '确定取消该订单？',
       content: '',
@@ -46,6 +46,7 @@ Page({
   toPayTap: function (e) {
     var that = this;
     var orderId = e.currentTarget.dataset.id;
+    var orderList = this.data.orderList;
     var money = e.currentTarget.dataset.money;
     let remark = "在线充值";
     let nextAction = {};
@@ -71,12 +72,15 @@ Page({
               wx.showToast({
                 title: '确认发货成功'
               });
-              that.onShow();
-              var tempOrder=that.data.orderList;
-              // tempOrder[]
-              // that.setData({
-
-              // })
+              for (var i = 0; i < orderList.length; i++) {
+                if (orderList[i].id == orderId) {
+                  orderList[i].status = 1;
+                }
+              }
+              that.setData({
+                orderList: orderList
+              });
+              wx.setStorageSync("orderList", orderList);
             } else if (res.cancel) {
               return;
             }
@@ -85,16 +89,11 @@ Page({
       }
     })
   },
-  orderDetail: function (e) {
-    var id = e.currentTarget.dataset.id;
-    wx.navigateTo({
-      url: "/pages/odetails/index?id=" + id
-    })
-  },
   /**
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
+    //判断获取到的orderList中相同订单号的订单是否与缓存中的相同，若相同则用缓存中的更新请求到的
     wx.showLoading();
     var that = this;
     var postData = {
@@ -109,10 +108,20 @@ Page({
         wx.hideLoading();
         if (res.data.code == 0) {
           that.setData({
-            orderList: res.data.data.orderList,
             logisticsMap: res.data.data.logisticsMap,
             goodsMap: res.data.data.goodsMap
           });
+          var orderListData = res.data.data.orderList;
+          var orderListDataStor = wx.getStorageSync("orderList");
+          for (var i = 0; i < orderListData.length; i++) {
+            for(var j=0;j<orderListDataStor.length;j++)
+            if (orderListData[i].id == orderListDataStor[j].id) {
+              orderListData[i].status = orderListDataStor[j].status;
+            }
+          }
+          that.setData({
+            orderList: orderListData
+          })
         } else {
           that.setData({
             orderList: null,
@@ -121,8 +130,7 @@ Page({
           });
         }
       }
-    })
-
+    });
   },
   getOrderStatistics: function () {
     var that = this;

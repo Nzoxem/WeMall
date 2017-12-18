@@ -243,6 +243,7 @@ Page({
       });
       return;
     }
+    
     that.setData({
       youhuijine:that.data.coupons[selIndex].money,
       curCoupon:that.data.coupons[selIndex]
